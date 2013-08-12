@@ -1,3 +1,10 @@
+/*
+ * File: Hangman.java
+ * ------------------
+ * This program will eventually play the Hangman game from
+ * Assignment #4.
+ */
+
 import acm.graphics.*;
 import acm.program.*;
 import acm.util.*;
@@ -7,7 +14,7 @@ import java.awt.*;
 public class Hangman extends ConsoleProgram {
 	private HangmanLexicon hangmanWords = new HangmanLexicon();
 	private RandomGenerator rgen = RandomGenerator.getInstance();
-    
+    private HangmanCanvas canvas;
 	//we need to declare a guess counter to keep track of the guesses remaining
 	private int guessCounter = 8;
 	
@@ -20,9 +27,12 @@ public class Hangman extends ConsoleProgram {
 	 * and how many guesses the user will get until he/she is hung.
 	 */
 	private void gameSetUp(){
+		canvas.reset();
+		hiddenWord = showNumberOfLetters();
+		canvas.displayWord(hiddenWord);
 		println("Welcome to Hangman!");
 		println("The word looks like this: " + hiddenWord);
-		println("You have " + guessCounter + "guesses left.");
+		println("You have " + guessCounter + " guesses left.");
 	}
 	//Picks a word from the HangmanLexicon
 	private String pickWord(){
@@ -74,6 +84,8 @@ public class Hangman extends ConsoleProgram {
 			if(word.indexOf(ch) == -1){
 				println("Oops, there are no " + ch + " 's in the word.");
 				guessCounter--;
+				wrongLetters = wrongLetters + ch;
+				canvas.noteIncorrectGuess(wrongLetters);
 			}
 			if(word.indexOf(ch) != -1){
 				println("That guess is correct! " + ch + " is in the word.");
@@ -89,6 +101,7 @@ public class Hangman extends ConsoleProgram {
 					if(i == 0){
 						hiddenWord = ch + hiddenWord.substring(1);
 					}
+					canvas.displayWord(hiddenWord);
 				}
 				
 			}
@@ -102,3 +115,14 @@ public class Hangman extends ConsoleProgram {
 	
 	//This is the character that is entered by the user
 	private char ch;
+	
+	//This keeps track of all the incorrect guessed letters
+	private String wrongLetters = "";
+	
+	public void init(){
+		canvas = new HangmanCanvas();
+		add(canvas);
+	}
+	
+
+}
